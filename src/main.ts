@@ -1,6 +1,6 @@
-import App from './App.svelte';
+import Comp from './Comp.svelte';
 
-const app = new App({
+const app = new Comp({
 	target: document.body,
 	props: {
 		name: 'world'
