@@ -1,3 +1,5 @@
+import 'Svelte'
+
 import Comp from './Comp.svelte';
 
 const app = new Comp({
