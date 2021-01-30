@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     let todos = []
     let newTodo = ""
     let emptyTodoError = false
@@ -19,7 +19,7 @@
         }
     }
 
-    function handleClick() {
+    function handleSubmitButtonClick() {
         addTodo()
     }
 
@@ -29,9 +29,17 @@
             addTodo()
         }
     }
+
+    function removeTodo(todo: string) {
+        todos = todos.filter(elem => elem !== todo)
+    }
+
+    function handleTodoItemClick(todo) {
+        removeTodo(todo)
+    }
 </script>
 
-<button on:click="{handleClick}">Add Todo</button>
+<button on:click="{handleSubmitButtonClick}">Add Todo</button>
 <input id=todo-input bind:value={newTodo} placeholder="enter todo here!" on:keypress={handleKeypress}>
 
 {#if emptyTodoError}
@@ -48,7 +56,7 @@
 
 <ul id=todo-list>
     {#each todos as todo}
-        <li>{todo}</li>
+        <li on:click={handleTodoItemClick(todo)}>{todo}</li>
     {/each}
 </ul>
 

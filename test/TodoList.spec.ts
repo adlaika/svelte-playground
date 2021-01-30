@@ -129,3 +129,22 @@ test("duplicate todos cannot be added, and trying to shows helpful text", async 
 
     expect(rendered.getByText(/todo already exists/i))
 })
+
+test("clicking a todo removes it from the list", async () => {
+    const rendered = render(TodoList)
+
+    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
+    const content = "feed the cat to the dog"
+
+    await userEvent.type(input, content)
+    const button = rendered.getByText(/Add Todo/i)
+    await userEvent.click(button)
+
+    const list = document.querySelector('#todo-list')
+    expect(list.children.length).toEqual(1)
+    const todo = list.querySelector('li')
+
+    await userEvent.click(todo)
+    expect(list.children.length).toEqual(0)
+    expect(() => rendered.getByText(content)).toThrow()
+})
