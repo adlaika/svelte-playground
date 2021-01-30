@@ -1,12 +1,9 @@
 import 'Svelte'
 
-import Comp from './Comp.svelte';
+import TodoList from './TodoList.svelte';
 
-const app = new Comp({
-	target: document.body,
-	props: {
-		name: 'world'
-	}
+const app = new TodoList({
+	target: document.body, //an HTML element to render to. Required.
 });
 
 export default app;
