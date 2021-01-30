@@ -39,24 +39,40 @@
     }
 </script>
 
-<button on:click="{handleSubmitButtonClick}">Add Todo</button>
-<input id=todo-input bind:value={newTodo} placeholder="enter todo here!" on:keypress={handleKeypress}>
+<div id="container">
+    <div id="todo-add-bar">
+        <button on:click="{handleSubmitButtonClick}">Add Todo</button>
+        <input id=todo-input bind:value={newTodo} placeholder="enter todo here!" on:keypress={handleKeypress}>
+    </div>
 
-{#if emptyTodoError}
-    <p id="empty-todo-error">Todo must not be empty!</p>
-{/if}
+    {#if emptyTodoError}
+        <p id="empty-todo-error">Todo must not be empty!</p>
+    {/if}
 
-{#if duplicateTodoError}
-    <p id="duplicate-todo-error">Todo already exists!</p>
-{/if}
+    {#if duplicateTodoError}
+        <p id="duplicate-todo-error">Todo already exists!</p>
+    {/if}
 
-{#if todos.length === 0}
-    <p id="empty-message">Add a todo to get started!</p>
-{/if}
+    {#if todos.length === 0}
+        <p id="empty-message">Add a todo to get started!</p>
+    {/if}
 
-<ul id=todo-list>
-    {#each todos as todo}
-        <li on:click={handleTodoItemClick(todo)}>{todo}</li>
-    {/each}
-</ul>
+    <ul id=todo-list>
+        {#each todos as todo}
+            <li on:click={handleTodoItemClick(todo)}>{todo}</li>
+        {/each}
+    </ul>
+</div>
 
+<style>
+    ul {
+        padding: 0;
+    }
+    #container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
