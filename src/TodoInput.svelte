@@ -3,21 +3,20 @@
     import { get } from 'svelte/store'
 
     let inputValue = ""
-    let emptyInputValueError = false
-    let duplicateTodoError = false
+    let error = ""
 
     function addTodo() {
         if (inputValue.length > 0) {
-            emptyInputValueError = false
+            error = ""
             if (get(todos).includes(inputValue)) {
-                duplicateTodoError = true
+                error = "Todo already exists!"
             } else {
-                duplicateTodoError = false
+                error = ""
                 todos.update(ts => [...ts, inputValue])
                 inputValue = ""
             }
         } else {
-            emptyInputValueError = true
+            error = "Todo must not be empty!"
         }
     }
 
@@ -38,12 +37,8 @@
     <input id=todo-input bind:value={inputValue} placeholder="enter todo here!" on:keypress={handleKeypress}>
 </div>
 
-{#if emptyInputValueError}
-    <p id="empty-todo-error">Todo must not be empty!</p>
-{/if}
-
-{#if duplicateTodoError}
-    <p id="duplicate-todo-error">Todo already exists!</p>
+{#if error}
+    <p id="todo-input-error">{error}</p>
 {/if}
 
 <style>
