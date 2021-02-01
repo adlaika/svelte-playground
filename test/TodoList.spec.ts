@@ -1,150 +1,49 @@
-import {fireEvent, render} from '@testing-library/svelte'
+import {render} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
-
 import TodoList from '../src/TodoList.svelte'
+import { todosStore as todos } from "../src/stores"
 
-const emptyMessageText = "Add a todo to get started!"
+beforeEach(() => {
+    todos.set([])
+})
+
+const noTodosYetText = "Add a todo to get started!"
+const selectNoTodosYet = node => node.getByText(/add a todo to get started/i)
 
 test('renders an empty todo list when there are no todos', () => {
     const {getByText} = render(TodoList)
-    expect(getByText(emptyMessageText)).toBeInTheDocument()
+    expect(getByText(noTodosYetText)).toBeInTheDocument()
 })
 
-test('shows an Add Todo button', () => {
-    const {getByText} = render(TodoList)
-    expect(getByText(/Add Todo/i)).toBeInTheDocument()
+test("empty message appears if no todos have been added", async () => {
+    const emptyTodoListRender = render(TodoList)
+    const emptyMessage = selectNoTodosYet(emptyTodoListRender)
+
+    expect(emptyMessage).toHaveTextContent(noTodosYetText)
 })
 
-test('shows an Add Todo text input', () => {
-    const {getByRole} = render(TodoList)
-    expect(getByRole("textbox")).toBeInTheDocument()
-})
-
-test("clicking the Add Todo button adds a todo to the list containing the contents of the text input, clearing it", async () => {
-    const rendered = render(TodoList)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = "feed the cat to the dog"
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-
-    const button = rendered.getByText(/Add Todo/i)
-    await userEvent.click(button)
-
-    const list = document.querySelector('#todo-list')
-
-    expect(list.children.length).toEqual(1)
-    const todo = list.querySelector('li')
-    expect(todo).toHaveTextContent(content)
-
-    expect(input.value).toEqual("")
-})
-
-test("todos can also be added with the Enter key", async () => {
-    const rendered = render(TodoList)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = "feed the cat to the dog"
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-    input.focus()
-    await fireEvent.keyPress(input, { code: 'Enter' })
-
-    const list = document.querySelector('#todo-list')
-
-    expect(list.children.length).toEqual(1)
-    const todo = list.querySelector('li')
-    expect(todo).toHaveTextContent(content)
-})
-
-test("todo can only be added if text box is not empty", async () => {
-    const rendered = render(TodoList)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = ""
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-    input.focus()
-    await fireEvent.keyPress(input, { code: 'Enter' })
-
-    const list = document.querySelector('#todo-list')
-    expect(list.children.length).toEqual(0)
-})
-
-test("empty message only appears if no todos have been added", async () => {
-    const rendered = render(TodoList)
-
-    const emptyMessage = document.querySelector('#empty-message')
-    expect(emptyMessage).toHaveTextContent(emptyMessageText)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
+test("empty message does not appear if todos are present", async () => {
     const content = "mop the gutters"
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
+    todos.set([content])
 
-    const button = rendered.getByText(/Add Todo/i)
-    await userEvent.click(button)
+    const todoListWithItemsRender = render(TodoList)
 
-    const emptyMessage2 = document.querySelector('#empty-message')
-    expect(emptyMessage2).toBeNull()
-})
-
-test("trying to add an empty todo gives helpful text", async () => {
-    const rendered = render(TodoList)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = ""
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-    input.focus()
-    await fireEvent.keyPress(input, { code: 'Enter' })
-
-    expect(rendered.getByText(/Todo must not be empty!/i)).toBeInTheDocument()
-})
-
-test("duplicate todos cannot be added, and trying to shows helpful text", async () => {
-    const rendered = render(TodoList)
-
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = "dig pungee pit for the mailman"
-    const button = rendered.getByText(/Add Todo/i)
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-    await userEvent.click(button)
-
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-    await userEvent.click(button)
-
-    const list = document.querySelector('#todo-list')
-
-    expect(list.children.length).toEqual(1)
-    const todo = list.querySelector('li')
-    expect(todo).toHaveTextContent(content)
-
-    expect(rendered.getByText(/todo already exists/i))
+    expect(() => selectNoTodosYet(todoListWithItemsRender)).toThrow()
 })
 
 test("clicking a todo removes it from the list", async () => {
+    const testTodoToRemove = "vacuum the ceiling"
+    const testTodos = ["brush the carpet", testTodoToRemove, "paint the lightbulbs"]
+    todos.set(testTodos)
+
     const rendered = render(TodoList)
 
-    const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
-    const content = "feed the cat to the dog"
-
-    await userEvent.type(input, content)
-    const button = rendered.getByText(/Add Todo/i)
-    await userEvent.click(button)
-
     const list = document.querySelector('#todo-list')
-    expect(list.children.length).toEqual(1)
-    const todo = list.querySelector('li')
+    expect(list.children.length).toEqual(3)
 
-    await userEvent.click(todo)
-    expect(list.children.length).toEqual(0)
-    expect(() => rendered.getByText(content)).toThrow()
+    const todoToDelete = rendered.getByText(testTodoToRemove)
+    await userEvent.click(todoToDelete)
+
+    expect(list.children.length).toEqual(2)
+    expect(() => rendered.getByText(testTodoToRemove)).toThrow()
 })

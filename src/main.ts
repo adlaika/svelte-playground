@@ -1,8 +1,8 @@
-import 'Svelte'
+import 'svelte'
 
-import TodoList from './TodoList.svelte';
+import TodoComponent from './TodoComponent.svelte';
 
-const app = new TodoList({
+const app = new TodoComponent({
 	target: document.body, //an HTML element to render to. Required.
 });
 
