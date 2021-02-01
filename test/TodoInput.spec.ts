@@ -1,29 +1,8 @@
 import {fireEvent, render} from '@testing-library/svelte'
-import userEvent from '@testing-library/user-event'
 import TodoInput from '../src/TodoInput.svelte'
 import { todosStore as todos } from "../src/stores"
 import { get } from "svelte/store"
-
-const selectInput = node => {
-    const inputByRole = <HTMLInputElement>node.getByRole("textbox")
-    const inputByPlaceholderText = <HTMLInputElement>node.getByPlaceholderText(/enter todo here!/i)
-    expect(inputByRole).toBe(inputByPlaceholderText)
-    return inputByRole
-}
-
-const addTodo = async (content, node, method: 'click'|'enter' = 'click') => {
-    const input = selectInput(node)
-    await userEvent.type(input, content)
-    expect(input.value).toEqual(content)
-
-    if (method === 'click') {
-        const button = node.getByText(/add todo/i)
-        await userEvent.click(button)
-    } else {
-        input.focus()
-        await fireEvent.keyPress(input, { code: 'Enter' })
-    }
-}
+import {addTodo, selectInput} from "./util";
 
 beforeEach(() => {
     todos.set([])

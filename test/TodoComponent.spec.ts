@@ -2,6 +2,14 @@ import {render} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 
 import TodoComponent from '../src/TodoComponent.svelte'
+import {selectButton, selectInput} from "./util";
+
+test("renders all the constituent parts", () => {
+    const rendered = render(TodoComponent)
+    expect(selectInput(rendered)).toBeInTheDocument()
+    expect(selectButton(rendered)).toBeInTheDocument()
+    expect(document.querySelector('#todo-list')).toBeInTheDocument()
+})
 
 test("clicking the Add Todo button adds a todo to the list containing the contents of the text input, clearing it", async () => {
     const rendered = render(TodoComponent)
