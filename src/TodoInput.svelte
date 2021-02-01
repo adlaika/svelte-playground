@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { todosStore as todos } from "./stores.ts"
+    import { todos } from "./stores.ts"
     import { get } from 'svelte/store'
 
     let inputValue = ""

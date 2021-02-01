@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { todosStore as todos } from "./stores.ts";
+    import { todos } from "./stores.ts";
 
     function removeTodo(todo: string) {
         todos.update(ts => ts.filter(elem => elem !== todo))

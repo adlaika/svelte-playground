@@ -1,3 +1,3 @@
 import {Writable, writable} from 'svelte/store';
 
-export const todosStore: Writable<string[]> = writable([]);
+export const todos: Writable<string[]> = writable([]);

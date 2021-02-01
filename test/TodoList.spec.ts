@@ -1,7 +1,7 @@
 import {render} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import TodoList from '../src/TodoList.svelte'
-import { todosStore as todos } from "../src/stores"
+import { todos as todos } from "../src/stores"
 
 beforeEach(() => {
     todos.set([])

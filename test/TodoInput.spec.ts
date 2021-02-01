@@ -1,6 +1,6 @@
 import {fireEvent, render} from '@testing-library/svelte'
 import TodoInput from '../src/TodoInput.svelte'
-import { todosStore as todos } from "../src/stores"
+import { todos as todos } from "../src/stores"
 import { get } from "svelte/store"
 import {addTodo, selectInput} from "./util";
 
