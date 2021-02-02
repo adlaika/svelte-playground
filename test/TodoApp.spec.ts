@@ -1,27 +1,27 @@
 import {fireEvent, render} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 
-import TodoList from '../src/TodoList.svelte'
+import TodoApp from '../src/TodoApp.svelte'
 
 const emptyMessageText = "Add a todo to get started!"
 
 test('renders an empty todo list when there are no todos', () => {
-    const {getByText} = render(TodoList)
+    const {getByText} = render(TodoApp)
     expect(getByText(emptyMessageText)).toBeInTheDocument()
 })
 
 test('shows an Add Todo button', () => {
-    const {getByText} = render(TodoList)
+    const {getByText} = render(TodoApp)
     expect(getByText(/Add Todo/i)).toBeInTheDocument()
 })
 
 test('shows an Add Todo text input', () => {
-    const {getByRole} = render(TodoList)
+    const {getByRole} = render(TodoApp)
     expect(getByRole("textbox")).toBeInTheDocument()
 })
 
 test("clicking the Add Todo button adds a todo to the list containing the contents of the text input, clearing it", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = "feed the cat to the dog"
@@ -42,7 +42,7 @@ test("clicking the Add Todo button adds a todo to the list containing the conten
 })
 
 test("todos can also be added with the Enter key", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = "feed the cat to the dog"
@@ -60,7 +60,7 @@ test("todos can also be added with the Enter key", async () => {
 })
 
 test("todo can only be added if text box is not empty", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = ""
@@ -75,7 +75,7 @@ test("todo can only be added if text box is not empty", async () => {
 })
 
 test("empty message only appears if no todos have been added", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const emptyMessage = document.querySelector('#empty-message')
     expect(emptyMessage).toHaveTextContent(emptyMessageText)
@@ -93,7 +93,7 @@ test("empty message only appears if no todos have been added", async () => {
 })
 
 test("trying to add an empty todo gives helpful text", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = ""
@@ -107,7 +107,7 @@ test("trying to add an empty todo gives helpful text", async () => {
 })
 
 test("duplicate todos cannot be added, and trying to shows helpful text", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = "dig pungee pit for the mailman"
@@ -131,7 +131,7 @@ test("duplicate todos cannot be added, and trying to shows helpful text", async 
 })
 
 test("clicking a todo removes it from the list", async () => {
-    const rendered = render(TodoList)
+    const rendered = render(TodoApp)
 
     const input = <HTMLInputElement>rendered.getByPlaceholderText(/enter todo here!/i)
     const content = "feed the cat to the dog"

@@ -1,6 +1,6 @@
 import 'Svelte'
 
-import TodoList from './TodoList.svelte';
+import TodoList from './TodoApp.svelte';
 
 const app = new TodoList({
 	target: document.body, //an HTML element to render to. Required.
