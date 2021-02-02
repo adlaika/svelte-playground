@@ -1,18 +1,20 @@
 <script lang="ts">
-    import { todosStore as todos } from "./stores.ts"
-    import { get } from 'svelte/store'
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+
+    export let todos = []
 
     let inputValue = ""
     let error = ""
 
-    function addTodo() {
+    const addTodo = () => {
         if (inputValue.length > 0) {
             error = ""
-            if (get(todos).includes(inputValue)) {
+            if (todos.includes(inputValue)) {
                 error = "Todo already exists!"
             } else {
                 error = ""
-                todos.update(ts => [...ts, inputValue])
+                dispatch("addTodo", inputValue);
                 inputValue = ""
             }
         } else {
@@ -20,11 +22,11 @@
         }
     }
 
-    function handleSubmitButtonClick() {
+    const handleSubmitButtonClick = () => {
         addTodo()
     }
 
-    function handleKeypress(event) {
+    const handleKeypress = event => {
         const code = event.code;
         if (code === 'Enter') {
             addTodo()

@@ -1,12 +1,6 @@
-import {fireEvent, render} from '@testing-library/svelte'
+import {render} from '@testing-library/svelte'
 import TodoInput from '../src/TodoInput.svelte'
-import { todosStore as todos } from "../src/stores"
-import { get } from "svelte/store"
 import {addTodo, selectInput} from "./util";
-
-beforeEach(() => {
-    todos.set([])
-})
 
 test('shows an Add Todo button', () => {
     const {getByText} = render(TodoInput)
@@ -23,10 +17,14 @@ test("clicking the Add Todo button adds a todo and clears the input textbox", as
 
     const input = selectInput(rendered)
     const content = "feed the cat to the dog"
+
+    rendered.component.$on("addTodo", event => {
+        expect(event.detail).toEqual(content)
+    })
+
     await addTodo(content, rendered, "click")
 
     expect(input.value).toEqual("")
-    expect(get(todos)).toEqual([content])
 })
 
 test("todos can also be added with the Enter key", async () => {
@@ -35,30 +33,37 @@ test("todos can also be added with the Enter key", async () => {
     const input = selectInput(rendered)
     const content = "feed the cat to the dog"
 
+    rendered.component.$on("addTodo", event => {
+       expect(event.detail).toEqual(content)
+    })
+
     await addTodo(content, rendered, "enter")
 
     expect(input.value).toEqual("")
-    expect(get(todos)).toEqual([content])
 })
 
 test("trying to add an empty todo fails and gives helpful text", async () => {
     const rendered = render(TodoInput)
 
+    rendered.component.$on("addTodo", event => {
+        fail("add todo event was fired, but shouldn't have been.")
+    })
+
     await addTodo("", rendered)
 
-    expect(get(todos)).toEqual([])
     expect(rendered.getByText(/todo must not be empty/i)).toBeInTheDocument()
 })
 
 test("duplicate todos cannot be added, and helpful text shows if user tries", async () => {
-    const rendered = render(TodoInput)
-
     const content = "dig pungee pit for the mailman"
+    const rendered = render(TodoInput, { props: { todos: [content] }})
+
+    rendered.component.$on("addTodo", event => {
+        fail("add todo event was fired, but shouldn't have been.")
+    })
 
     await addTodo(content, rendered)
-    await addTodo(content, rendered)
 
-    expect(get(todos)).toEqual([content])
-    expect(rendered.getByText(/todo already exists/i))
+    expect(rendered.getByText(/todo already exists/i)).toBeInTheDocument()
 })
 

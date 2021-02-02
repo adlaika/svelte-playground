@@ -1,22 +1,24 @@
 <script lang="ts">
-    import { todosStore as todos } from "./stores.ts";
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
 
-    function removeTodo(todo: string) {
-        todos.update(ts => ts.filter(elem => elem !== todo))
+    export let todos = [];
+
+    const removeTodo = (todo: string) => {
+        dispatch("removeTodo", todo);
     }
 
-    function handleTodoItemClick(todo) {
+    const handleTodoItemClick = todo => {
         removeTodo(todo)
     }
 </script>
 
-
-{#if $todos.length === 0}
+{#if todos.length === 0}
     <p id="empty-message">Add a todo to get started!</p>
 {/if}
 
 <ul id=todo-list>
-    {#each $todos as todo}
+    {#each todos as todo}
         <li on:click={handleTodoItemClick(todo)}>{todo}</li>
     {/each}
 </ul>
