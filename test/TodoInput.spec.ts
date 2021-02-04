@@ -1,25 +1,24 @@
-import {fireEvent, render} from '@testing-library/svelte'
+import {render} from '@testing-library/svelte'
 import TodoInput from '../src/TodoInput.svelte'
-import { todos as todos } from "../src/stores"
+import { createTodos } from "../src/stores"
 import { get } from "svelte/store"
 import {addTodo, selectInput} from "./util";
 
-beforeEach(() => {
-    todos.set([])
-})
-
 test('shows an Add Todo button', () => {
-    const {getByText} = render(TodoInput)
+    const todos = createTodos()
+    const {getByText} = render(TodoInput, { props: { todos: todos }})
     expect(getByText(/add todo/i)).toBeInTheDocument()
 })
 
 test('shows an Add Todo text input', () => {
-    const {getByRole} = render(TodoInput)
+    const todos = createTodos()
+    const {getByRole} = render(TodoInput, { props: { todos: todos }})
     expect(getByRole("textbox")).toBeInTheDocument()
 })
 
 test("clicking the Add Todo button adds a todo and clears the input textbox", async () => {
-    const rendered = render(TodoInput)
+    const todos = createTodos()
+    const rendered = render(TodoInput, { props: { todos: todos }})
 
     const input = selectInput(rendered)
     const content = "feed the cat to the dog"
@@ -30,19 +29,20 @@ test("clicking the Add Todo button adds a todo and clears the input textbox", as
 })
 
 test("todos can also be added with the Enter key", async () => {
-    const rendered = render(TodoInput)
+    const todos = createTodos()
+    const rendered = render(TodoInput, { props: { todos: todos }})
 
-    const input = selectInput(rendered)
     const content = "feed the cat to the dog"
-
     await addTodo(content, rendered, "enter")
 
+    const input = selectInput(rendered)
     expect(input.value).toEqual("")
     expect(get(todos)).toEqual([content])
 })
 
 test("trying to add an empty todo fails and gives helpful text", async () => {
-    const rendered = render(TodoInput)
+    const todos = createTodos()
+    const rendered = render(TodoInput, { props: { todos: todos }})
 
     await addTodo("", rendered)
 
@@ -51,7 +51,8 @@ test("trying to add an empty todo fails and gives helpful text", async () => {
 })
 
 test("duplicate todos cannot be added, and helpful text shows if user tries", async () => {
-    const rendered = render(TodoInput)
+    const todos = createTodos()
+    const rendered = render(TodoInput, { props: { todos: todos }})
 
     const content = "dig pungee pit for the mailman"
 

@@ -1,18 +1,20 @@
 <script lang="ts">
-    import { todos } from "./stores.ts"
     import { get } from 'svelte/store'
+    import type {Todos} from "./stores";
+
+    export let todos: Todos
 
     let inputValue = ""
     let error = ""
 
-    function addTodo() {
+    const addTodo = () => {
         if (inputValue.length > 0) {
             error = ""
             if (get(todos).includes(inputValue)) {
                 error = "Todo already exists!"
             } else {
                 error = ""
-                todos.update(ts => [...ts, inputValue])
+                todos.addTodo(inputValue)
                 inputValue = ""
             }
         } else {

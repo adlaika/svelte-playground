@@ -1,42 +1,42 @@
 import {render} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import TodoList from '../src/TodoList.svelte'
-import { todos as todos } from "../src/stores"
-
-beforeEach(() => {
-    todos.set([])
-})
+import { createTodos } from "../src/stores"
+import {addTodo} from "./util";
 
 const noTodosYetText = "Add a todo to get started!"
-const selectNoTodosYet = node => node.getByText(/add a todo to get started/i)
 
 test('renders an empty todo list when there are no todos', () => {
-    const {getByText} = render(TodoList)
+    const todos = createTodos()
+    const {getByText} = render(TodoList, { props: { todos: todos }})
     expect(getByText(noTodosYetText)).toBeInTheDocument()
 })
 
 test("empty message appears if no todos have been added", async () => {
-    const emptyTodoListRender = render(TodoList)
-    const emptyMessage = selectNoTodosYet(emptyTodoListRender)
+    const todos = createTodos()
+    const emptyTodoListRender = render(TodoList, { props: { todos: todos }})
+    const emptyMessage = emptyTodoListRender.getByText(noTodosYetText)
 
     expect(emptyMessage).toHaveTextContent(noTodosYetText)
 })
 
 test("empty message does not appear if todos are present", async () => {
+    const todos = createTodos()
     const content = "mop the gutters"
-    todos.set([content])
+    await todos.addTodo(content)
+    const todoListWithItemsRender = render(TodoList, { props: { todos: todos }})
 
-    const todoListWithItemsRender = render(TodoList)
-
-    expect(() => selectNoTodosYet(todoListWithItemsRender)).toThrow()
+    const actual = todoListWithItemsRender.queryByText(noTodosYetText)
+    expect(actual).toBeNull()
 })
 
 test("clicking a todo removes it from the list", async () => {
+    const todos = createTodos()
     const testTodoToRemove = "vacuum the ceiling"
     const testTodos = ["brush the carpet", testTodoToRemove, "paint the lightbulbs"]
-    todos.set(testTodos)
+    await Promise.all(testTodos.map(t => todos.addTodo(t)))
 
-    const rendered = render(TodoList)
+    const rendered = render(TodoList, { props: {todos: todos}})
 
     const list = document.querySelector('#todo-list')
     expect(list.children.length).toEqual(3)

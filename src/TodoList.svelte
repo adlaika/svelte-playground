@@ -1,15 +1,10 @@
 <script lang="ts">
-    import { todos } from "./stores.ts";
-
-    function removeTodo(todo: string) {
-        todos.update(ts => ts.filter(elem => elem !== todo))
-    }
-
-    function handleTodoItemClick(todo) {
-        removeTodo(todo)
+    import type {Todos} from "./stores";
+    export let todos: Todos
+    const handleTodoItemClick = (todo: string) => {
+        todos.removeTodo(todo)
     }
 </script>
-
 
 {#if $todos.length === 0}
     <p id="empty-message">Add a todo to get started!</p>
