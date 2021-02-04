@@ -1,21 +1,20 @@
 <script lang="ts">
     let todos = []
-    let newTodo = ""
-    let emptyTodoError = false
-    let duplicateTodoError = false
+    let inputValue = ""
+    let error = ""
 
     function addTodo() {
-        if (newTodo.length > 0) {
-            emptyTodoError = false
-            if (todos.includes(newTodo)) {
-                duplicateTodoError = true
+        if (inputValue.length > 0) {
+            error = ""
+            if (todos.includes(inputValue)) {
+                error = "Todo already exists!"
             } else {
-                duplicateTodoError = false
-                todos = [...todos, newTodo]
-                newTodo = ""
+                error = ""
+                todos = [...todos, inputValue]
+                inputValue = ""
             }
         } else {
-            emptyTodoError = true
+            error = "Todo must not be empty!"
         }
     }
 
@@ -42,15 +41,11 @@
 <div id="container">
     <div id="todo-add-bar">
         <button on:click="{handleSubmitButtonClick}">Add Todo</button>
-        <input id=todo-input bind:value={newTodo} placeholder="enter todo here!" on:keypress={handleKeypress}>
+        <input id=todo-input bind:value={inputValue} placeholder="enter todo here!" on:keypress={handleKeypress}>
     </div>
 
-    {#if emptyTodoError}
-        <p id="empty-todo-error">Todo must not be empty!</p>
-    {/if}
-
-    {#if duplicateTodoError}
-        <p id="duplicate-todo-error">Todo already exists!</p>
+    {#if error}
+        <p id="todo-error">{error}</p>
     {/if}
 
     {#if todos.length === 0}
