@@ -22,11 +22,9 @@
         }
     }
 
-    function handleSubmitButtonClick() {
-        addTodo()
-    }
+    const handleSubmitButtonClick = () => addTodo()
 
-    function handleKeypress(event) {
+    const handleKeypress = event => {
         const code = event.code;
         if (code === 'Enter') {
             addTodo()
