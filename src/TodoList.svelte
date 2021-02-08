@@ -1,9 +1,6 @@
 <script lang="ts">
     import type {Todos} from "./stores";
     export let todos: Todos
-    const handleTodoItemClick = (todo: string) => {
-        todos.removeTodo(todo)
-    }
 </script>
 
 {#if $todos.length === 0}
@@ -12,7 +9,7 @@
 
 <ul id=todo-list>
     {#each $todos as todo}
-        <li on:click={handleTodoItemClick(todo)}>{todo}</li>
+        <li on:click={todos.removeTodo(todo)}>{todo}</li>
     {/each}
 </ul>
 
