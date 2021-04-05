@@ -17,12 +17,12 @@ export const selectButton = node => {
 
 export const addTodo = async (content, node, method: 'click'|'enter' = 'click') => {
     const input = selectInput(node)
-    await userEvent.type(input, content)
+    userEvent.type(input, content)
     expect(input.value).toEqual(content)
 
     if (method === 'click') {
         const button = selectButton(node)
-        await userEvent.click(button)
+        userEvent.click(button)
     } else {
         input.focus()
         await fireEvent.keyPress(input, { code: 'Enter' })
